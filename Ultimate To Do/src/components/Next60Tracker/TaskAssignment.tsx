@@ -17,11 +17,23 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
 }) => {
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
   const [selectedDay, setSelectedDay] = useState<number>(initialDay || 1);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAssign = () => {
-    if (selectedTask && selectedDay) {
-      onAssign(selectedTask, selectedDay);
-      onClose();
+  const handleAssign = async () => {
+    if (!selectedTask) {
+      setError('Please select a task');
+      return;
+    }
+    if (selectedDay < 1 || selectedDay > 60) {
+      setError('Day must be between 1 and 60');
+      return;
+    }
+    
+    setError(null);
+    try {
+      await onAssign(selectedTask, selectedDay);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to assign task');
     }
   };
 
@@ -42,6 +54,12 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded text-sm">
+          {error}
+        </div>
+      )}
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Select Day (1-60)
@@ -51,7 +69,10 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
           min="1"
           max="60"
           value={selectedDay}
-          onChange={(e) => setSelectedDay(Number(e.target.value))}
+          onChange={(e) => {
+            setSelectedDay(Number(e.target.value));
+            setError(null);
+          }}
           className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -85,8 +106,8 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
 
       <div className="flex space-x-2">
         <Button
-          onClick={handleAssign}
-          disabled={!selectedTask}
+          onClick={() => void handleAssign()}
+          disabled={!selectedTask || selectedDay < 1 || selectedDay > 60}
           variant="primary"
         >
           Assign Task

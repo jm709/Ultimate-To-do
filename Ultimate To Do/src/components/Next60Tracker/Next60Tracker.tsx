@@ -46,14 +46,22 @@ export const Next60Tracker: React.FC = () => {
     clearSelection();
   };
 
-  const handleOpenAssign = (dayNumber: number) => {
-    selectDay(dayNumber);
+  const handleOpenAssign = async (dayNumber: number) => {
+    await selectDay(dayNumber);
     setShowAssignModal(true);
   };
 
   const handleAssignTask = async (taskId: number, dayNumber: number) => {
-    await assignTask(taskId, dayNumber, 'manual');
-    setShowAssignModal(false);
+    try {
+      await assignTask(taskId, dayNumber, 'manual');
+      setShowAssignModal(false);
+      // Refresh the selected day data if it's still selected
+      if (selectedDay === dayNumber) {
+        await selectDay(dayNumber);
+      }
+    } catch (err) {
+      console.error('Error assigning task:', err);
+    }
   };
 
   const handleToggleTask = async (taskId: number) => {
@@ -86,14 +94,37 @@ export const Next60Tracker: React.FC = () => {
         <div className="text-center py-12 text-gray-500">Loading tracker...</div>
       ) : (
         <>
-          <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 mb-6">
-            {days.map((day) => (
-              <DayBox
-                key={day.id}
-                day={day}
-                onClick={() => handleDayClick(day.day_number)}
-              />
-            ))}
+          {/* Week by week layout */}
+          <div className="space-y-6 mb-6">
+            {Array.from({ length: Math.ceil(days.length / 7) }, (_, weekIndex) => {
+              const weekDays = days.slice(weekIndex * 7, (weekIndex + 1) * 7);
+              return (
+                <div key={weekIndex} className="bg-white rounded-lg shadow p-4">
+                  <div className="flex items-center mb-3">
+                    <h3 className="text-lg font-semibold text-gray-700">
+                      Week {weekIndex + 1}
+                    </h3>
+                    <span className="ml-2 text-sm text-gray-500">
+                      (Days {weekIndex * 7 + 1}-{Math.min((weekIndex + 1) * 7, 60)})
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-7 gap-2">
+                    {weekDays.map((day) => (
+                      <DayBox
+                        key={day.id}
+                        day={day}
+                        onClick={() => handleDayClick(day.day_number)}
+                      />
+                    ))}
+                    {/* Fill empty slots if last week has less than 7 days */}
+                    {weekDays.length < 7 &&
+                      Array.from({ length: 7 - weekDays.length }).map((_, i) => (
+                        <div key={`empty-${i}`} className="min-h-[80px]"></div>
+                      ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -146,13 +177,33 @@ export const Next60Tracker: React.FC = () => {
         </>
       )}
 
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-semibold text-blue-900 mb-2">How to use:</h3>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Click on any day box to view its details and assigned tasks</li>
-          <li>• Use the "Assign Task to Day" button to manually assign tasks</li>
-          <li>• Track your progress as colors change based on completion</li>
-        </ul>
+      <div className="mt-6 space-y-4">
+        <div className="text-center">
+          <Button
+            onClick={() => handleOpenAssign(1)}
+            size="lg"
+            disabled={days.length === 0 || tasks.length === 0}
+          >
+            <Plus size={20} className="inline mr-2" />
+            Assign Task to Any Day
+          </Button>
+          {tasks.length === 0 && (
+            <p className="text-sm text-gray-500 mt-2">
+              Create some tasks first before assigning them!
+            </p>
+          )}
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="font-semibold text-blue-900 mb-2">How to use:</h3>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>• <strong>Day numbers</strong> are shown large for easy reference</li>
+            <li>• <strong>Click any day</strong> to view details and mark tasks complete</li>
+            <li>• Use <strong>"Assign Task"</strong> button to add tasks to specific days</li>
+            <li>• Colors automatically update as you complete tasks</li>
+            <li>• Track your progress week by week!</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

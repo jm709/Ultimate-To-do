@@ -50,6 +50,7 @@ export const useTrackerStore = create<TrackerStore>((set, get) => ({
   },
 
   assignTask: async (taskId: number, dayNumber: number, assignedBy: string) => {
+    set({ error: null });
     try {
       await assignTaskToDay(taskId, dayNumber, assignedBy);
       await updateDayStatus(dayNumber);
@@ -58,7 +59,10 @@ export const useTrackerStore = create<TrackerStore>((set, get) => ({
         await get().selectDay(dayNumber);
       }
     } catch (error) {
-      set({ error: String(error) });
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Error assigning task:', errorMessage);
+      set({ error: `Failed to assign task: ${errorMessage}` });
+      throw error; // Re-throw so the UI can handle it
     }
   },
 
