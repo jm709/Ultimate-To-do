@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Trash2, Plus, Calendar } from 'lucide-react';
 import { Checkbox } from '../common/Checkbox';
 import { Button } from '../common/Button';
-import { Modal } from '../common/Modal';
-import { TaskForm } from './TaskForm';
+import { InlineTaskForm } from './InlineTaskForm';
 import type { Task, CreateTaskInput } from '../../types/task';
 import { formatDate, isOverdue } from '../../utils/dateHelpers';
 
@@ -12,6 +11,7 @@ interface TaskItemProps {
   onToggle: (id: number) => void;
   onDelete: (id: number) => void;
   onAddSubtask: (subtask: CreateTaskInput) => void;
+  onTaskClick?: (taskId: number) => void;
   level?: number;
 }
 
@@ -20,6 +20,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onToggle,
   onDelete,
   onAddSubtask,
+  onTaskClick,
   level = 0,
 }) => {
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
@@ -47,7 +48,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             />
           </div>
 
-          <div className="flex-1 min-w-0">
+          <div 
+            className="flex-1 min-w-0 cursor-pointer"
+            onClick={() => onTaskClick?.(task.id)}
+          >
             <h3
               className={`text-lg font-medium ${
                 task.is_completed ? 'line-through text-gray-500' : 'text-gray-900'
@@ -99,6 +103,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         </div>
       </div>
 
+      {showSubtaskForm && (
+        <div className="mt-2">
+          <InlineTaskForm
+            parentId={task.id}
+            onSubmit={handleAddSubtask}
+            onCancel={() => setShowSubtaskForm(false)}
+            autoFocus={true}
+          />
+        </div>
+      )}
+
       {task.subtasks && task.subtasks.length > 0 && (
         <div className="mt-2">
           {task.subtasks.map((subtask) => (
@@ -108,23 +123,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               onToggle={onToggle}
               onDelete={onDelete}
               onAddSubtask={onAddSubtask}
+              onTaskClick={onTaskClick}
               level={level + 1}
             />
           ))}
         </div>
       )}
-
-      <Modal
-        isOpen={showSubtaskForm}
-        onClose={() => setShowSubtaskForm(false)}
-        title="Add Subtask"
-      >
-        <TaskForm
-          parentId={task.id}
-          onSubmit={handleAddSubtask}
-          onCancel={() => setShowSubtaskForm(false)}
-        />
-      </Modal>
     </div>
   );
 };

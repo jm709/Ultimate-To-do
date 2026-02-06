@@ -3,13 +3,13 @@ export const getColorClass = (
 ): string => {
   switch (status) {
     case 'red':
-      return 'bg-tracker-red';
+      return 'bg-red-400';
     case 'yellow':
-      return 'bg-tracker-yellow';
+      return 'bg-yellow-400';
     case 'light_green':
-      return 'bg-tracker-light-green';
+      return 'bg-green-300';
     case 'deep_green':
-      return 'bg-tracker-deep-green';
+      return 'bg-green-600';
     default:
       return 'bg-gray-300';
   }
