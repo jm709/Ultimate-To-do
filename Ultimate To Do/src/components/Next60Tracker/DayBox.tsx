@@ -2,6 +2,7 @@ import React from 'react';
 import { getColorClass } from '../../utils/colorLogic';
 import type { DayTracker } from '../../types/tracker';
 import { format, parseISO } from 'date-fns';
+import { isFutureDate } from '../../utils/dateHelpers';
 
 interface DayBoxProps {
   day: DayTracker;
@@ -9,8 +10,8 @@ interface DayBoxProps {
 }
 
 export const DayBox: React.FC<DayBoxProps> = ({ day, onClick }) => {
-  const colorClass = getColorClass(day.completion_status);
-  
+  const isFuture = isFutureDate(day.date);  
+  const colorClass = getColorClass(day.completion_status, isFuture);
   const formatDisplayDate = (dateStr: string) => {
     try {
       return format(parseISO(dateStr), 'MM/dd');

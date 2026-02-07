@@ -1,0 +1,23 @@
+Features
+---
+Todo List
+Have a general to-do list with a large overall task and subtasks, that can be checked off
+    Checking off the large overall task will automatically check off subtasks
+    Tasks can have due dates
+    Tasks can be recurring 
+Add a system where a large task can be broken down into subtasks
+
+Next 60 Tracker
+60 rounded boxes representing days. Every day will have a set amount of tasks.
+Completing no tasks during a day makes that day red, some tasks yellow, most tasks light green, all deep green
+Tasks can be manually assigned to certain days, or will use AI to distribute tasks based on their difficulty, due dates, and recurring tasks.
+
+Pomodoro
+Built in pomodoro timer, that will assign tasks/tasks can be selected to be worked on from the Next 60 Tracker. 
+    History of how long the work/study session was is saved, what was completed is also saved, 
+    shows the user their current study streak (how many days in a row used pomodoro),
+    average study time
+    longest streak
+    total tasks completed
+
+

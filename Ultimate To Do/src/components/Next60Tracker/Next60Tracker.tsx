@@ -75,7 +75,7 @@ export const Next60Tracker: React.FC = () => {
   const selectedDayData = days.find((d) => d.day_number === selectedDay);
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto p-15">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Next 60 Days Tracker</h1>
         <p className="text-gray-600">
@@ -95,20 +95,13 @@ export const Next60Tracker: React.FC = () => {
       ) : (
         <>
           {/* Week by week layout */}
-          <div className="space-y-6 mb-6">
-            {Array.from({ length: Math.ceil(days.length / 7) }, (_, weekIndex) => {
-              const weekDays = days.slice(weekIndex * 7, (weekIndex + 1) * 7);
+          <div className="space-y-12 mb-6">
+            {Array.from({ length: Math.ceil(days.length / 5) }, (_, weekIndex) => {
+              const weekDays = days.slice(weekIndex * 5, (weekIndex + 1) * 5);
               return (
                 <div key={weekIndex} className="bg-white rounded-lg shadow p-4">
-                  <div className="flex items-center mb-3">
-                    <h3 className="text-lg font-semibold text-gray-700">
-                      Week {weekIndex + 1}
-                    </h3>
-                    <span className="ml-2 text-sm text-gray-500">
-                      (Days {weekIndex * 7 + 1}-{Math.min((weekIndex + 1) * 7, 60)})
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-7 gap-2">
+                  
+                  <div className="grid grid-cols-5 gap-2 ">
                     {weekDays.map((day) => (
                       <DayBox
                         key={day.id}
@@ -116,9 +109,9 @@ export const Next60Tracker: React.FC = () => {
                         onClick={() => handleDayClick(day.day_number)}
                       />
                     ))}
-                    {/* Fill empty slots if last week has less than 7 days */}
-                    {weekDays.length < 7 &&
-                      Array.from({ length: 7 - weekDays.length }).map((_, i) => (
+                    {/* Fill empty slots if last week has less than 5 days */}
+                    {weekDays.length < 5 &&
+                      Array.from({ length: 5 - weekDays.length }).map((_, i) => (
                         <div key={`empty-${i}`} className="min-h-[80px]"></div>
                       ))}
                   </div>
@@ -130,6 +123,10 @@ export const Next60Tracker: React.FC = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Legend</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gray-300 rounded"></div>
+                <span className="text-sm">Future day</span>
+              </div>
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-tracker-red rounded"></div>
                 <span className="text-sm">No tasks completed</span>

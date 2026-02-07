@@ -1,4 +1,4 @@
-import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns';
+import { format, parseISO, isToday, isTomorrow, isPast, isFuture } from 'date-fns';
 
 export const formatDate = (date: string): string => {
   try {
@@ -15,6 +15,15 @@ export const formatDate = (date: string): string => {
     return format(parsedDate, 'MMM dd, yyyy');
   } catch {
     return date;
+  }
+};
+
+export const isFutureDate = (date: string): boolean => {
+  try {
+    const parsedDate = parseISO(date);
+    return isFuture(parsedDate);
+  } catch {
+    return false;
   }
 };
 
