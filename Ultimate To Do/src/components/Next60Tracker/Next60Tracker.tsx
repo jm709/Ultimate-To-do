@@ -75,7 +75,7 @@ export const Next60Tracker: React.FC = () => {
   const selectedDayData = days.find((d) => d.day_number === selectedDay);
 
   return (
-    <div className="max-w-3xl mx-auto p-15">
+    <div className="max-w-3xl mx-auto p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Next 60 Days Tracker</h1>
         <p className="text-gray-600">
@@ -96,28 +96,15 @@ export const Next60Tracker: React.FC = () => {
         <>
           {/* Week by week layout */}
           <div className="space-y-12 mb-6">
-            {Array.from({ length: Math.ceil(days.length / 5) }, (_, weekIndex) => {
-              const weekDays = days.slice(weekIndex * 5, (weekIndex + 1) * 5);
-              return (
-                <div key={weekIndex} className="bg-white rounded-lg shadow p-4">
-                  
-                  <div className="grid grid-cols-5 gap-2 ">
-                    {weekDays.map((day) => (
-                      <DayBox
-                        key={day.id}
-                        day={day}
-                        onClick={() => handleDayClick(day.day_number)}
-                      />
-                    ))}
-                    {/* Fill empty slots if last week has less than 5 days */}
-                    {weekDays.length < 5 &&
-                      Array.from({ length: 5 - weekDays.length }).map((_, i) => (
-                        <div key={`empty-${i}`} className="min-h-[80px]"></div>
-                      ))}
-                  </div>
-                </div>
-              );
-            })}
+            <div className="grid grid-cols-5 gap-1.5 mb-6">
+              {days.map((day) => (
+                <DayBox
+                  key={day.id}
+                  day={day}
+                  onClick={() => handleDayClick(day.day_number)}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
