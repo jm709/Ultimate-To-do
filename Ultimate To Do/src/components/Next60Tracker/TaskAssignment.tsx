@@ -60,23 +60,6 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
         </div>
       )}
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Select Day (1-60)
-        </label>
-        <input
-          type="number"
-          min="1"
-          max="60"
-          value={selectedDay}
-          onChange={(e) => {
-            setSelectedDay(Number(e.target.value));
-            setError(null);
-          }}
-          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-
       <p className="text-sm text-gray-600">
         Select a task to assign:
       </p>
