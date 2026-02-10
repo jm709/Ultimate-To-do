@@ -123,28 +123,28 @@ pub fn update_task(
     let conn = state.conn.lock().unwrap();
     
     let mut query = String::from("UPDATE tasks SET ");
-    let mut params = Vec::new();
     let mut updates = Vec::new();
+    let mut param_values: Vec<Box<dyn rusqlite::ToSql>> = Vec::new();
 
     if let Some(t) = title {
         updates.push("title = ?");
-        params.push(t);
+        param_values.push(Box::new(t));
     }
     if let Some(d) = description {
         updates.push("description = ?");
-        params.push(d);
+        param_values.push(Box::new(d));
     }
     if let Some(dd) = due_date {
         updates.push("due_date = ?");
-        params.push(dd);
+        param_values.push(Box::new(dd));
     }
     if let Some(ir) = is_recurring {
-        updates.push("is_recurring = ?");
-        params.push(ir.to_string());
+        updates.push("is_recurring = ?");  
+        param_values.push(Box::new(ir as i32));
     }
     if let Some(rp) = recurrence_pattern {
         updates.push("recurrence_pattern = ?");
-        params.push(rp);
+        param_values.push(Box::new(rp));
     }
 
     if updates.is_empty() {
@@ -152,9 +152,14 @@ pub fn update_task(
     }
 
     query.push_str(&updates.join(", "));
-    query.push_str(&format!(" WHERE id = {}", id));
+    query.push_str(&format!(" WHERE id = ?"));
+    param_values.push(Box::new(id));
 
-    conn.execute(&query, rusqlite::params_from_iter(params))
+    let params: Vec<&dyn rusqlite::ToSql> = param_values.iter()
+        .map(|b| b.as_ref())
+        .collect();
+
+    conn.execute(&query, params.as_slice())
         .map_err(|e| e.to_string())?;
 
     Ok(())
