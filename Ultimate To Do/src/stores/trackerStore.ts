@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { DayTracker } from '../types/tracker';
 import type { Task } from '../types/task';
+
 import {
   initialize60Days,
   getDayTrackerData,

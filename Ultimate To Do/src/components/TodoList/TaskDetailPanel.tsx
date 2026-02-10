@@ -42,7 +42,7 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
       title: title.trim(),
       description: description.trim() || undefined,
       due_date: dueDate || undefined,
-      is_recurring: isRecurring,
+      is_recurring: Boolean(isRecurring),
       recurrence_pattern: isRecurring ? recurrencePattern : undefined,
     });
   };
@@ -59,20 +59,8 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
 
   return (
     <>
-      {/* Overlay */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-30 transition-opacity z-40"
-          onClick={onClose}
-        />
-      )}
-
       {/* Side Panel */}
-      <div
-        className={`fixed top-0 right-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
+      <div className="bg-white p-6 rounded-lg shadow space-y-4">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
@@ -127,8 +115,12 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                 type="date"
                 value={dueDate}
                 onChange={(e) => {
-                  setDueDate(e.target.value);
-                  handleSave();
+                  const value = e.target.value;
+                  setDueDate(value);
+
+                  onUpdate(task.id, {
+                    due_date: value || undefined,
+                  });
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -147,8 +139,13 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                     type="checkbox"
                     checked={isRecurring}
                     onChange={(e) => {
-                      setIsRecurring(e.target.checked);
-                      setTimeout(handleSave, 0);
+                      const checked = e.target.checked;
+                      setIsRecurring(checked);
+
+                      onUpdate(task.id, {
+                        is_recurring: checked,
+                        recurrence_pattern: checked ? recurrencePattern : undefined,
+                      });
                     }}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />

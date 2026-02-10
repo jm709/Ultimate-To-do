@@ -76,7 +76,7 @@ export const InlineTaskForm: React.FC<InlineTaskFormProps> = ({
             onKeyDown={handleKeyDown}
             onFocus={() => setIsExpanded(true)}
             placeholder={parentId ? "Add a subtask..." : "Add a task..."}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
@@ -96,7 +96,7 @@ export const InlineTaskForm: React.FC<InlineTaskFormProps> = ({
           </button>
         </div>
 
-        {isExpanded && (
+        {/* {isExpanded && (
           <div className="mt-3 space-y-3 pt-3 border-t border-gray-200">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -154,7 +154,7 @@ export const InlineTaskForm: React.FC<InlineTaskFormProps> = ({
               </>
             )}
           </div>
-        )}
+        )} */}
       </form>
     </div>
   );

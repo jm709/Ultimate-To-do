@@ -4,14 +4,14 @@ A comprehensive productivity application built with Tauri, React, and TypeScript
 
 ## Features
 
-### 📝 To-Do List
+### To-Do List
 - Create tasks with titles, descriptions, and due dates
 - Organize tasks with unlimited subtask nesting
 - Automatic subtask completion when parent task is completed
 - Recurring tasks support (daily, weekly, monthly)
 - Visual indication of overdue tasks
 
-### 📅 Next 60 Days Tracker
+### Next 60 Days Tracker
 - Visual 60-day progress tracker with color-coded status
 - Manual task assignment to specific days
 - Color indicators:
@@ -20,7 +20,7 @@ A comprehensive productivity application built with Tauri, React, and TypeScript
   - 🟢 Light Green: 50-99% complete
   - 🟢 Deep Green: 100% complete
 
-### ⏱️ Pomodoro Timer
+### Pomodoro Timer
 - Customizable session durations (15, 25, 45, 60 minutes)
 - Optional task linking for focused work sessions
 - Session history tracking
