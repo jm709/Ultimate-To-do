@@ -10,23 +10,15 @@ interface DayDetailPanelProps {
   day: DayTracker;
   tasks: Task[];
   onToggleTask: (taskId: number) => void;
-  onAssignTask: (dayNumber: number) => void;
+  onShowAssignment: () => void;
 }
 
 export const DayDetailPanel: React.FC<DayDetailPanelProps> = ({
   day,
   tasks,
   onToggleTask,
-  onAssignTask,
+  onShowAssignment,
 }) => {
-  if (!day) {
-    return (
-      <div className="text-gray-500">
-        Select a day to view details.
-      </div>
-    );
-  }
-
   const formatDisplayDate = (dateStr: string) => {
     try {
       return format(parseISO(dateStr), 'EEEE, MMMM dd, yyyy');
@@ -37,9 +29,15 @@ export const DayDetailPanel: React.FC<DayDetailPanelProps> = ({
 
   return (
     <div className="bg-white p-6 rounded-lg shadow space-y-4">
-      <h2 className="text-xl font-semibold">
-        Day {day.day_number}
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">
+          Day {day.day_number}
+        </h2>
+        <Button onClick={onShowAssignment} size="sm">
+          <Plus size={16} className="mr-1" />
+          Assign Task
+        </Button>
+      </div>
 
       <div className="text-sm text-gray-600">
         {formatDisplayDate(day.date)}
@@ -52,19 +50,7 @@ export const DayDetailPanel: React.FC<DayDetailPanelProps> = ({
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold">Assigned Tasks:</h3>
-          {onAssignTask && (
-            <Button
-              size="sm"
-              onClick={() => onAssignTask(day.day_number)}
-            >
-              <Plus size={16} className="inline mr-1" />
-              Add Task
-            </Button>
-          )}
-        </div>
-
+        <h3 className="font-medium mb-2">Tasks</h3>
         {tasks.length === 0 ? (
           <p className="text-gray-500 text-sm">
             No tasks assigned to this day yet.

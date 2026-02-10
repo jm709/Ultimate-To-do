@@ -4,19 +4,16 @@ import type { Task } from '../../types/task';
 
 interface TaskAssignmentProps {
   tasks: Task[];
-  selectedDay: number | null;
-  onAssign: (taskId: number, dayNumber: number) => void;
+  onAssign: (taskId: number) => void;
   onClose: () => void;
 }
 
 export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
   tasks,
-  selectedDay: initialDay,
   onAssign,
   onClose,
 }) => {
   const [selectedTask, setSelectedTask] = useState<number | null>(null);
-  const [selectedDay, setSelectedDay] = useState<number>(initialDay || 1);
   const [error, setError] = useState<string | null>(null);
 
   const handleAssign = async () => {
@@ -24,17 +21,9 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
       setError('Please select a task');
       return;
     }
-    if (selectedDay < 1 || selectedDay > 60) {
-      setError('Day must be between 1 and 60');
-      return;
-    }
     
     setError(null);
-    try {
-      await onAssign(selectedTask, selectedDay);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to assign task');
-    }
+    onAssign(selectedTask);
   };
 
   // Flatten tasks to include subtasks
@@ -89,8 +78,8 @@ export const TaskAssignment: React.FC<TaskAssignmentProps> = ({
 
       <div className="flex space-x-2">
         <Button
-          onClick={() => void handleAssign()}
-          disabled={!selectedTask || selectedDay < 1 || selectedDay > 60}
+          onClick={handleAssign}
+          disabled={!selectedTask}
           variant="primary"
         >
           Assign Task

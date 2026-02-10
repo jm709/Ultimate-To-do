@@ -54,7 +54,6 @@ export const useTrackerStore = create<TrackerStore>((set, get) => ({
     set({ error: null });
     try {
       await assignTaskToDay(taskId, dayNumber, assignedBy);
-      await updateDayStatus(dayNumber);
       await get().fetchDays();
       if (get().selectedDay === dayNumber) {
         await get().selectDay(dayNumber);

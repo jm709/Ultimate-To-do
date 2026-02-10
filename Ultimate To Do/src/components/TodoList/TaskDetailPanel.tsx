@@ -42,7 +42,7 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
       title: title.trim(),
       description: description.trim() || undefined,
       due_date: dueDate || undefined,
-      is_recurring: Boolean(isRecurring),
+      is_recurring: isRecurring,
       recurrence_pattern: isRecurring ? recurrencePattern : undefined,
     });
   };

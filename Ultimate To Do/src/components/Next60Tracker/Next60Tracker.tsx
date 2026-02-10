@@ -22,6 +22,7 @@ export const Next60Tracker: React.FC = () => {
   } = useTrackerStore();
 
   const { tasks, fetchTasks, toggleTask } = useTaskStore();
+  const [showTaskAssignment, setShowTaskAssignment] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -34,15 +35,15 @@ export const Next60Tracker: React.FC = () => {
 
   const handleDayClick = async (dayNumber: number) => {
     await selectDay(dayNumber);
+    setShowTaskAssignment(false); // Reset assignment view when selecting new day
   };
 
-  const handleAssignTask = async (taskId: number, dayNumber: number) => {
+  const handleAssignTask = async (taskId: number) => {
+    if (!selectedDay) return;
+    
     try {
-      await assignTask(taskId, dayNumber, 'manual');
-      // Refresh the selected day data if it's still selected
-      if (selectedDay === dayNumber) {
-        await selectDay(dayNumber);
-      }
+      await assignTask(taskId, selectedDay, 'manual');
+      setShowTaskAssignment(false);
     } catch (err) {
       console.error('Error assigning task:', err);
     }
@@ -79,7 +80,6 @@ export const Next60Tracker: React.FC = () => {
           <div className="text-center py-12 text-gray-500">Loading tracker...</div>
         ) : (
           <>
-            {/* Week by week layout */}
             <div className="space-y-12 mb-6">
               <div className="grid grid-cols-5 gap-1.5 mb-6">
                 {days.map((day) => (
@@ -134,22 +134,27 @@ export const Next60Tracker: React.FC = () => {
         </div>
       </div>
       <div className="col-span-1">
-       {selectedDayData && (
-        <DayDetailPanel
-          day={selectedDayData}
-          tasks={selectedDayTasks}
+        {selectedDayData && !showTaskAssignment && (
+          <DayDetailPanel
+            day={selectedDayData}
+            tasks={selectedDayTasks}
             onToggleTask={handleToggleTask}
-            onAssignTask={(dayNumber: number) => handleAssignTask(selectedDayData?.id || 0, dayNumber)}
+            onShowAssignment={() => setShowTaskAssignment(true)}
           />
         )}
-        {selectedDayData && tasks.length > 0 && (
-          <TaskAssignment
-            tasks={tasks} 
-            selectedDay={selectedDayData?.day_number || 0}
-            onAssign={handleAssignTask}
-            onClose={clearSelection}
-          />  
-      )}
+        
+        {selectedDayData && showTaskAssignment && (
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4">
+              Assign Task to Day {selectedDayData.day_number}
+            </h2>
+            <TaskAssignment
+              tasks={tasks}
+              onAssign={handleAssignTask}
+              onClose={() => setShowTaskAssignment(false)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
