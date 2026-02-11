@@ -199,35 +199,12 @@ pub fn toggle_task_completion(state: State<DbState>, id: i64) -> Result<bool, St
     
     // If completing a parent task, complete all subtasks
     if new_status {
-        collect_subtask_ids(&conn, id, &mut affected_task_ids)?;
         complete_subtasks(&conn, id)?;
     }
 
     update_day_for_tasks(&conn, &affected_task_ids)?;
 
     Ok(new_status)
-}
-
-fn collect_subtask_ids(
-    conn: &rusqlite::Connection, 
-    parent_id: i64, 
-    collected: &mut Vec<i64>
-) -> Result<(), String> {
-    let mut stmt = conn
-        .prepare("SELECT id FROM tasks WHERE parent_id = ?1")
-        .map_err(|e| e.to_string())?;
-    
-    let subtask_ids: Vec<i64> = stmt
-        .query_map([parent_id], |row| row.get(0))
-        .map_err(|e| e.to_string())?
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|e| e.to_string())?;
-    
-    for subtask_id in subtask_ids {
-        collected.push(subtask_id);
-        collect_subtask_ids(conn, subtask_id, collected)?;
-    }
-    Ok(())
 }
 
 fn update_day_for_tasks(
