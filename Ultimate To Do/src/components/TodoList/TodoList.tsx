@@ -50,20 +50,10 @@ export const TodoList: React.FC = () => {
         } else {
           incompleteTasks.push(task);
         }
-      } else {
-        continue;
-        // const parentTask = findTaskById(tasks, task.parent_id);
-        // if (parentTask) {
-        //   if (parentTask.is_completed) {
-        //     completedTasks.push(task);
-        //   } else {
-        //     incompleteTasks.push(task);
-        //   }
-        // }
-      }
+      } 
     }
     return { completedTasks, incompleteTasks };
-  }, [tasks, findTaskById(tasks, selectedTaskId ?? 0)]);
+  }, [tasks]);
   
 
   const handleAddTask = async (task: CreateTaskInput) => {

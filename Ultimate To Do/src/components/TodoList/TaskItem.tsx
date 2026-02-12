@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trash2, Plus, Calendar } from 'lucide-react';
+import { Trash2, Plus, Calendar, ChevronRight, ChevronDown } from 'lucide-react';
 import { Checkbox } from '../common/Checkbox';
 import { Button } from '../common/Button';
 import { InlineTaskForm } from './InlineTaskForm';
@@ -24,6 +24,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   level = 0,
 }) => {
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleAddSubtask = (subtask: CreateTaskInput) => {
     onAddSubtask(subtask);
@@ -32,6 +33,11 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
   const indent = level * 24;
   const overdue = task.due_date && !task.is_completed && isOverdue(task.due_date);
+
+
+  const toggleCollapse = () => {
+    setIsCollapsed(prev => !prev);
+  };
 
   return (
     <div style={{ marginLeft: `${indent}px` }}>
@@ -80,7 +86,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             )}
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             {level < 3 && (
               <Button
                 size="sm"
@@ -99,6 +105,16 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             >
               <Trash2 size={16} />
             </Button>
+            {task.subtasks && task.subtasks.length > 0 && (
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={toggleCollapse}
+                title={isCollapsed ? 'Expand task' : 'Collapse task'}
+              >
+                {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -114,7 +130,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         </div>
       )}
 
-      {task.subtasks && task.subtasks.length > 0 && (
+      {task.subtasks && task.subtasks.length > 0 && !isCollapsed && (
         <div className="mt-2">
           {task.subtasks.map((subtask) => (
             <TaskItem
