@@ -16,11 +16,6 @@ export const TodoList: React.FC = () => {
     fetchTasks();
   }, [fetchTasks]);
 
-  const handleAddTask = async (task: CreateTaskInput) => {
-    await addTask(task);
-    setShowInlineForm(false);
-  };
-
   // Find the selected task recursively
   const findTaskById = (taskList: Task[], id: number): Task | null => {
     for (const task of taskList) {
@@ -32,6 +27,37 @@ export const TodoList: React.FC = () => {
     }
     return null;
   };
+
+  const splitTasks = useMemo(() => {
+    const completedTasks: Task[] = [];
+    const incompleteTasks: Task[] = [];
+    for (const task of tasks) {
+      if (!task.parent_id) {
+        if (task.is_completed) {
+          completedTasks.push(task);
+        } else {
+          incompleteTasks.push(task);
+        }
+      } else {
+        const parentTask = findTaskById(tasks, task.parent_id);
+        if (parentTask) {
+          if (parentTask.is_completed) {
+            completedTasks.push(task);
+          } else {
+            incompleteTasks.push(task);
+          }
+        }
+      }
+    }
+    return { completedTasks, incompleteTasks };
+  }, [tasks, findTaskById(tasks, selectedTaskId ?? 0)]);
+  
+
+  const handleAddTask = async (task: CreateTaskInput) => {
+    await addTask(task);
+    setShowInlineForm(false);
+  };
+
 
   const selectedTask = useMemo(() => {
     if (selectedTaskId === null) return null;
@@ -96,7 +122,7 @@ export const TodoList: React.FC = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {tasks.map((task) => (
+                  {splitTasks.incompleteTasks.map((task) => (
                     <TaskItem
                       key={task.id}
                       task={task}
@@ -106,6 +132,18 @@ export const TodoList: React.FC = () => {
                       onTaskClick={handleTaskClick}
                     />
                   ))}
+                  <div className="space-y-2">
+                    {splitTasks.completedTasks.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={toggleTask}
+                        onDelete={removeTask}
+                        onAddSubtask={addTask}
+                        onTaskClick={handleTaskClick}
+                      />
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
