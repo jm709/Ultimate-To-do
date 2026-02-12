@@ -1,11 +1,23 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronRight, ChevronDown } from 'lucide-react';
 import { useTaskStore } from '../../stores/taskStore';
 import { TaskItem } from './TaskItem';
 import { InlineTaskForm } from './InlineTaskForm';
 import { TaskDetailPanel } from './TaskDetailPanel';
 import { Button } from '../common/Button';
 import type { CreateTaskInput, Task } from '../../types/task';
+
+function CollapsibleSection({ title, count, children }: { title: string, count: number, children: React.ReactNode }) {
+  const [open, setOpen] = useState(true);
+
+  return <div>
+    <button onClick={() => setOpen(!open)} className="flex items-center gap-2 font-semibold text-sm">
+      {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+      {title} ({count})
+    </button>
+    {open && <div className="mt-2 space-y-2">{children}</div>}
+  </div>;
+}
 
 export const TodoList: React.FC = () => {
   const { tasks, isLoading, error, fetchTasks, addTask, removeTask, toggleTask, editTask } = useTaskStore();
@@ -39,14 +51,15 @@ export const TodoList: React.FC = () => {
           incompleteTasks.push(task);
         }
       } else {
-        const parentTask = findTaskById(tasks, task.parent_id);
-        if (parentTask) {
-          if (parentTask.is_completed) {
-            completedTasks.push(task);
-          } else {
-            incompleteTasks.push(task);
-          }
-        }
+        continue;
+        // const parentTask = findTaskById(tasks, task.parent_id);
+        // if (parentTask) {
+        //   if (parentTask.is_completed) {
+        //     completedTasks.push(task);
+        //   } else {
+        //     incompleteTasks.push(task);
+        //   }
+        // }
       }
     }
     return { completedTasks, incompleteTasks };
@@ -122,17 +135,19 @@ export const TodoList: React.FC = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {splitTasks.incompleteTasks.map((task) => (
-                    <TaskItem
-                      key={task.id}
-                      task={task}
-                      onToggle={toggleTask}
-                      onDelete={removeTask}
-                      onAddSubtask={addTask}
-                      onTaskClick={handleTaskClick}
-                    />
-                  ))}
-                  <div className="space-y-2">
+                  <CollapsibleSection title="Incomplete Tasks" count={splitTasks.incompleteTasks.length}>
+                    {splitTasks.incompleteTasks.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={toggleTask}
+                        onDelete={removeTask}
+                        onAddSubtask={addTask}
+                        onTaskClick={handleTaskClick}
+                      />
+                    ))}
+                  </CollapsibleSection>
+                  <CollapsibleSection title="Completed Tasks" count={splitTasks.completedTasks.length}>
                     {splitTasks.completedTasks.map((task) => (
                       <TaskItem
                         key={task.id}
@@ -143,7 +158,7 @@ export const TodoList: React.FC = () => {
                         onTaskClick={handleTaskClick}
                       />
                     ))}
-                  </div>
+                  </CollapsibleSection>
                 </div>
               )}
             </div>
