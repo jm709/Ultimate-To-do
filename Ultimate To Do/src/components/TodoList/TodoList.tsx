@@ -24,9 +24,29 @@ export const TodoList: React.FC = () => {
   const [showInlineForm, setShowInlineForm] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
+  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => {
+    const saved = localStorage.getItem('collapsedIds');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+
+  useEffect(() => {
+    localStorage.setItem(
+      'collapsedIds', 
+      JSON.stringify(Array.from(collapsedIds))
+    );
+  }, [collapsedIds]);
+
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
+
+  const toggleCollapse = (taskId: number) => {
+    setCollapsedIds(prev => {
+      const next = new Set(prev);
+      next.has(taskId) ? next.delete(taskId) : next.add(taskId);
+      return next;
+    });
+  };
 
   // Find the selected task recursively
   const findTaskById = (taskList: Task[], id: number): Task | null => {
@@ -134,6 +154,8 @@ export const TodoList: React.FC = () => {
                         onDelete={removeTask}
                         onAddSubtask={addTask}
                         onTaskClick={handleTaskClick}
+                        collapsedIds={collapsedIds}
+                        onToggleCollapse={toggleCollapse}
                       />
                     ))}
                   </CollapsibleSection>
@@ -146,6 +168,8 @@ export const TodoList: React.FC = () => {
                         onDelete={removeTask}
                         onAddSubtask={addTask}
                         onTaskClick={handleTaskClick}
+                        collapsedIds={collapsedIds}
+                        onToggleCollapse={toggleCollapse}
                       />
                     ))}
                   </CollapsibleSection>

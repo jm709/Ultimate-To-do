@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Trash2, Plus, Calendar, ChevronRight, ChevronDown } from 'lucide-react';
-import { Checkbox } from '../common/Checkbox';
+import { Checkbox, CircleCheck } from '../common/Checkbox';
 import { Button } from '../common/Button';
 import { InlineTaskForm } from './InlineTaskForm';
 import type { Task, CreateTaskInput } from '../../types/task';
@@ -13,6 +13,8 @@ interface TaskItemProps {
   onAddSubtask: (subtask: CreateTaskInput) => void;
   onTaskClick?: (taskId: number) => void;
   level?: number;
+  collapsedIds: Set<number>;
+  onToggleCollapse: (id: number) => void;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({
@@ -22,9 +24,11 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onAddSubtask,
   onTaskClick,
   level = 0,
+  collapsedIds,
+  onToggleCollapse,
 }) => {
+  const isCollapsed = collapsedIds.has(task.id);
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleAddSubtask = (subtask: CreateTaskInput) => {
     onAddSubtask(subtask);
@@ -35,10 +39,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const overdue = task.due_date && !task.is_completed && isOverdue(task.due_date);
 
 
-  const toggleCollapse = () => {
-    setIsCollapsed(prev => !prev);
-  };
-
   return (
     <div style={{ marginLeft: `${indent}px` }}>
       <div
@@ -46,9 +46,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           task.is_completed ? 'bg-gray-50' : 'bg-white'
         } ${overdue ? 'border-red-400' : 'border-gray-200'} hover:shadow-md`}
       >
-        <div className="flex items-start space-x-3">
-          <div className="pt-1">
-            <Checkbox
+        <div className="flex items-center space-x-3">
+          <div className="my-1">
+            <CircleCheck 
               checked={task.is_completed}
               onChange={() => onToggle(task.id)}
             />
@@ -109,7 +109,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={toggleCollapse}
+                onClick={() => onToggleCollapse?.(task.id)}
                 title={isCollapsed ? 'Expand task' : 'Collapse task'}
               >
                 {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
@@ -141,6 +141,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               onAddSubtask={onAddSubtask}
               onTaskClick={onTaskClick}
               level={level + 1}
+              collapsedIds={collapsedIds}
+              onToggleCollapse={onToggleCollapse}
             />
           ))}
         </div>
