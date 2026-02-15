@@ -42,7 +42,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   return (
     <div style={{ marginLeft: `${indent}px` }}>
       <div
-        className={`border rounded-lg p-4 mb-2 transition-all ${
+        className={`group border rounded-lg p-4 mb-2 transition-all ${
           task.is_completed ? 'bg-gray-50' : 'bg-white'
         } ${overdue ? 'border-red-400' : 'border-gray-200'} hover:shadow-md`}
       >
@@ -102,6 +102,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               variant="danger"
               onClick={() => onDelete(task.id)}
               title="Delete task"
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <Trash2 size={16} />
             </Button>

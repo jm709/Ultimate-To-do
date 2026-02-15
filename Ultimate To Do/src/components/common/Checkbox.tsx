@@ -1,4 +1,4 @@
-import { Circle } from 'lucide-react';
+import { Circle, CheckCircle2 } from 'lucide-react';
 import React from 'react';
 
 interface CheckboxProps {
@@ -31,20 +31,28 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 export const CircleCheck: React.FC<CheckboxProps> = ({
   checked,
   onChange,
-  label,
   disabled = false,
 }) => {
   return (
-    <label className="flex items-center space-x-2 cursor-pointer">
+    <label className="flex items-center cursor-pointer">
       <input type="checkbox"
       checked={checked}
       onChange={(e) => onChange(e.target.checked)}
       disabled={disabled}
       className="hidden"
       />
-      <Circle size={16} 
-      className={`${checked ? 'text-blue-600' : 'text-gray-300'} w-5 h-5 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed`}
-      />
+      {checked ? ( 
+        <CheckCircle2
+         size={20}
+         className="text-blue-600 transition-colors"
+          />
+        ) : (
+          <Circle
+          size={20}
+          className="text-gray-400 hover:text-gray-600 transition-colors"
+          />
+        )
+      }
     </label>
   );
 };
