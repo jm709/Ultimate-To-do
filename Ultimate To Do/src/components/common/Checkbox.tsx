@@ -44,7 +44,7 @@ export const CircleCheck: React.FC<CheckboxProps> = ({
       {checked ? ( 
         <CheckCircle2
          size={20}
-         className="text-blue-600 transition-colors"
+         className="text-green-400 transition-colors"
           />
         ) : (
           <Circle

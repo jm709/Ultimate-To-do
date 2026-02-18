@@ -35,17 +35,22 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     setShowSubtaskForm(false);
   };
 
-  const indent = level * 24;
+  const indent = 20;
   const overdue = task.due_date && !task.is_completed && isOverdue(task.due_date);
 
 
   return (
     <div style={{ marginLeft: `${indent}px` }}>
       <div
-        className={`group border rounded-lg p-4 mb-2 transition-all ${
-          task.is_completed ? 'bg-gray-50' : 'bg-white'
-        } ${overdue ? 'border-red-400' : 'border-gray-200'} hover:shadow-md`}
+        className={`group border rounded-lg p-6 mb-4 transition-all ${
+          overdue ? 'border-red-400' : ''} hover:shadow-md hover:bg-orange-900`
+        }
       >
+      {/* <div
+        className={`group border p-6 mb-4 transition-all ${
+          task.is_completed ? 'bg-gray-50' : 'bg-white'
+        } ${overdue ? 'border-red-400' : 'border-green-500'} hover:shadow-md hover:bg-orange-50`}
+      > */}
         <div className="flex items-center space-x-3">
           <div className="my-1">
             <CircleCheck 
@@ -59,11 +64,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             onClick={() => onTaskClick?.(task.id)}
           >
             <h3
-              className={`text-lg font-medium ${
-                task.is_completed ? 'line-through text-gray-500' : 'text-gray-900'
+              className={`text-md font-medium ${
+                task.is_completed ? 'line-through text-green-900' : 'text-gray-900'
               }`}
             >
-              {task.title}
+              {task.title && (
+                <span className="text-md font-medium text-white">{task.title}</span>
+              )} 
               {task.is_recurring && (
                 <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                   Recurring
@@ -93,25 +100,18 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 variant="secondary"
                 onClick={() => setShowSubtaskForm(true)}
                 title="Add subtask"
+                className="bg-transparent"
               >
                 <Plus size={16} />
               </Button>
             )}
-            <Button
-              size="sm"
-              variant="danger"
-              onClick={() => onDelete(task.id)}
-              title="Delete task"
-              className="opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Trash2 size={16} />
-            </Button>
             {task.subtasks && task.subtasks.length > 0 && (
               <Button
                 size="sm"
                 variant="secondary"
                 onClick={() => onToggleCollapse?.(task.id)}
                 title={isCollapsed ? 'Expand task' : 'Collapse task'}
+                className="bg-transparent"
               >
                 {isCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
               </Button>
@@ -141,7 +141,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               onDelete={onDelete}
               onAddSubtask={onAddSubtask}
               onTaskClick={onTaskClick}
-              level={level + 1}
+              level={level}
               collapsedIds={collapsedIds}
               onToggleCollapse={onToggleCollapse}
             />

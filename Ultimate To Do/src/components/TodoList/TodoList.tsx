@@ -7,15 +7,14 @@ import { TaskDetailPanel } from './TaskDetailPanel';
 import { Button } from '../common/Button';
 import type { CreateTaskInput, Task } from '../../types/task';
 
-function CollapsibleSection({ title, count, children }: { title: string, count: number, children: React.ReactNode }) {
-  const [open, setOpen] = useState(true);
-
+function CollapsibleSection({ title, count, children, open }: { title: string, count: number, children: React.ReactNode, open: boolean }) {
+  const [isOpen, setIsOpen] = useState(open);
   return <div>
-    <button onClick={() => setOpen(!open)} className="flex items-center gap-2 font-semibold text-sm">
-      {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+    <button className="flex items-center gap-2 font-semibold text-sm text-green-500" onClick={() => setIsOpen(!isOpen)}>
+      {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
       {title} ({count})
     </button>
-    {open && <div className="mt-2 space-y-2">{children}</div>}
+    {isOpen && <div className="mt-2 space-y-2">{children}</div>} 
   </div>;
 }
 
@@ -108,14 +107,14 @@ export const TodoList: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="grid grid-cols-4 gap-4">
-        <div className="col-span-2">
-          <div className={`flex-1 transition-all duration-300 ${selectedTaskId ? 'mr-96' : ''}`}>
+    <div className="min-h-screen bg-[#050505] py-8">
+      <div style={{ marginLeft: '8px'}}>
+        <div className="grid grid-cols-4 gap-4">
+          <div className="col-span-2">
             <div className="max-w-4xl mx-auto p-10">
               <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold text-gray-900">To-Do List</h1>
-                <Button onClick={() => setShowInlineForm(!showInlineForm)}>
+                <h1 className="text-3xl font-bold text-orange-500">To-Do List</h1>
+                <Button onClick={() => setShowInlineForm(!showInlineForm)} size="md">
                   <Plus size={20} className="inline mr-2" />
                   Add Task
                 </Button>
@@ -145,7 +144,7 @@ export const TodoList: React.FC = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <CollapsibleSection title="Incomplete Tasks" count={splitTasks.incompleteTasks.length}>
+                  <CollapsibleSection title="Incomplete Tasks" count={splitTasks.incompleteTasks.length} open={true}>
                     {splitTasks.incompleteTasks.map((task) => (
                       <TaskItem
                         key={task.id}
@@ -159,7 +158,7 @@ export const TodoList: React.FC = () => {
                       />
                     ))}
                   </CollapsibleSection>
-                  <CollapsibleSection title="Completed Tasks" count={splitTasks.completedTasks.length}>
+                  <CollapsibleSection title="Completed Tasks" count={splitTasks.completedTasks.length} open={false}>
                     {splitTasks.completedTasks.map((task) => (
                       <TaskItem
                         key={task.id}
@@ -177,15 +176,15 @@ export const TodoList: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
-        <div className="col-span-1">
-        <TaskDetailPanel
-            task={selectedTask}
-            isOpen={selectedTaskId !== null}
-            onClose={() => setSelectedTaskId(null)}
-            onUpdate={handleUpdateTask}
-            onDelete={handleDeleteTask}
-          />
+          <div className="col-span-1">
+          <TaskDetailPanel
+              task={selectedTask}
+              isOpen={selectedTaskId !== null}
+              onClose={() => setSelectedTaskId(null)}
+              onUpdate={handleUpdateTask}
+              onDelete={handleDeleteTask}
+            />
+          </div>
         </div>
       </div>
     </div>
